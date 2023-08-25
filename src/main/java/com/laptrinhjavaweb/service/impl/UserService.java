@@ -189,11 +189,6 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void assignStaff(AssignStaffRequest assignStaff) {
-        List<String> roles = SecurityUtils.getAuthorities();
-        if(roles.contains(SystemConstant.USER_ROLE)){
-            return;
-        }
-
         BuildingEntity buildingEntity = buildingRepository.findById(assignStaff.getBuildingId()).orElse(null);
         List<UserEntity> users =  userRepository.findByIdIn(Arrays.asList(assignStaff.getStaffs()));
         buildingEntity.setStaffs(users);
@@ -219,10 +214,6 @@ public class UserService implements IUserService {
 
     @Override
     public void assignCustomer(AssignCustomerRequest assignStaffRequest) {
-        List<String> roles = SecurityUtils.getAuthorities();
-        if(roles.contains(SystemConstant.USER_ROLE)){
-            return;
-        }
         CustomerEntity customerEntity = customerRepository.findById(assignStaffRequest.getCustomerId()).orElse(null);
         List<UserEntity> users =  userRepository.findByIdIn(Arrays.asList(assignStaffRequest.getStaffs()));
         customerEntity.setUsers(users);
