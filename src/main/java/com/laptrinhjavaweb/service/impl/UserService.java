@@ -16,6 +16,7 @@ import com.laptrinhjavaweb.repository.entity.UserEntity;
 import com.laptrinhjavaweb.exception.MyException;
 import com.laptrinhjavaweb.repository.RoleRepository;
 import com.laptrinhjavaweb.repository.UserRepository;
+import com.laptrinhjavaweb.security.utils.SecurityUtils;
 import com.laptrinhjavaweb.service.IUserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,6 +189,11 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void assignStaff(AssignStaffRequest assignStaff) {
+        List<String> roles = SecurityUtils.getAuthorities();
+        if(roles.contains(SystemConstant.USER_ROLE)){
+            return;
+        }
+
         BuildingEntity buildingEntity = buildingRepository.findById(assignStaff.getBuildingId()).orElse(null);
         List<UserEntity> users =  userRepository.findByIdIn(Arrays.asList(assignStaff.getStaffs()));
         buildingEntity.setStaffs(users);
@@ -213,6 +219,10 @@ public class UserService implements IUserService {
 
     @Override
     public void assignCustomer(AssignCustomerRequest assignStaffRequest) {
+        List<String> roles = SecurityUtils.getAuthorities();
+        if(roles.contains(SystemConstant.USER_ROLE)){
+            return;
+        }
         CustomerEntity customerEntity = customerRepository.findById(assignStaffRequest.getCustomerId()).orElse(null);
         List<UserEntity> users =  userRepository.findByIdIn(Arrays.asList(assignStaffRequest.getStaffs()));
         customerEntity.setUsers(users);
